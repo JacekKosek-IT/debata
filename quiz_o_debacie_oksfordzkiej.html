@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pl" class="h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz o Debacie Oksfordzkiej</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        oxford: {
+                            50: '#f0f4f8',
+                            100: '#d9e2ec',
+                            200: '#bccadc',
+                            300: '#9fb3c8',
+                            400: '#829ab1',
+                            500: '#627d98',
+                            600: '#486581',
+                            700: '#334e68',
+                            800: '#243b53',
+                            900: '#102a43',
+                            950: '#0b1d3a',
+                        },
+                        gold: {
+                            400: '#f6ad55',
+                            500: '#ed8936',
+                            600: '#dd6b20',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Georgia', 'Cambria', 'Times New Roman', 'serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .font-academic {
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+
+        .custom-glass {
+            background: rgba(16, 42, 67, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .option-card {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .option-card:hover:not(.disabled) {
+            transform: translateY(-2px);
+            border-color: rgba(99, 179, 237, 0.5);
+            background-color: rgba(36, 59, 83, 0.8);
+        }
+    </style>
+</head>
+<body class="min-h-full flex flex-col justify-between bg-gradient-to-br from-slate-950 via-oxford-950 to-slate-900">
+
+    <!-- Header / Navbar -->
+    <header class="border-b border-oxford-800/60 bg-oxford-950/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-oxford-800 rounded-lg text-amber-400 border border-amber-500/30">
+                    <i data-lucide="award" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-academic text-lg font-bold text-slate-100 tracking-wide">Debata Oksfordzka</h1>
+                    <p class="text-xs text-oxford-300">Sprawdź swoją wiedzę z retoryki i zasad</p>
+                </div>
+            </div>
+            <div id="quiz-badge" class="hidden sm:flex items-center space-x-2 text-xs font-semibold px-3 py-1.5 rounded-full bg-oxford-900 border border-oxford-700 text-oxford-200">
+                <i data-lucide="book-open" class="w-3.5 h-3.5 text-amber-400"></i>
+                <span>Sztuka Argumentacji</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6">
+        <div class="w-full max-w-3xl">
+
+            <!-- Ekran Powitalny (Start Screen) -->
+            <div id="start-card" class="custom-glass rounded-2xl p-6 sm:p-10 shadow-2xl border border-oxford-700/50 text-center relative overflow-hidden">
+                <div class="absolute -top-12 -right-12 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-12 -left-12 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="inline-flex p-4 rounded-full bg-oxford-900/80 border border-oxford-700 text-amber-400 mb-6 shadow-inner">
+                    <i data-lucide="mic" class="w-12 h-12"></i>
+                </div>
+                
+                <h2 class="font-academic text-3xl sm:text-4xl font-bold text-white mb-4 tracking-tight">
+                    Mistrz Szatkowanego Słowa
+                </h2>
+                <p class="text-oxford-200 mb-8 max-w-xl mx-auto text-base leading-relaxed">
+                    Czy potrafisz odróżnić informację od pytania? Wiesz, jaka jest rola Marszałka i ilu mówców liczy drużyna? Weź udział w interaktywnym teście wiedzy o debacie oksfordzkiej!
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-left max-w-xl mx-auto">
+                    <div class="p-3 bg-oxford-900/60 rounded-xl border border-oxford-800/80 flex items-center space-x-3">
+                        <i data-lucide="help-circle" class="w-5 h-5 text-amber-400 shrink-0"></i>
+                        <span class="text-xs text-slate-300"><strong>10 pytań</strong> jednokrotnego wyboru</span>
+                    </div>
+                    <div class="p-3 bg-oxford-900/60 rounded-xl border border-oxford-800/80 flex items-center space-x-3">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+                        <span class="text-xs text-slate-300"><strong>Wyjaśnienia</strong> do każdej odpowiedzi</span>
+                    </div>
+                    <div class="p-3 bg-oxford-900/60 rounded-xl border border-oxford-800/80 flex items-center space-x-3">
+                        <i data-lucide="trophy" class="w-5 h-5 text-amber-400 shrink-0"></i>
+                        <span class="text-xs text-slate-300">Certyfikat <strong>Eksperta</strong> na końcu</span>
+                    </div>
+                </div>
+
+                <button id="start-btn" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl shadow-lg shadow-amber-500/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center space-x-2 mx-auto">
+                    <span>Rozpocznij Quiz</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Ekran Quizu (Quiz Screen) -->
+            <div id="quiz-card" class="hidden custom-glass rounded-2xl p-5 sm:p-8 shadow-2xl border border-oxford-700/50">
+                <!-- Pasek Postępu i Nagłówek -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center text-xs sm:text-sm text-oxford-300 font-medium mb-2">
+                        <span id="question-counter">Pytanie 1 z 10</span>
+                        <span id="score-live" class="text-amber-400 font-semibold">Wynik: 0 pkt</span>
+                    </div>
+                    <div class="w-full bg-oxford-900 rounded-full h-2 overflow-hidden border border-oxford-800">
+                        <div id="progress-bar" class="bg-gradient-to-r from-amber-500 to-amber-400 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <!-- Tytuł Pytania -->
+                <div class="mb-6">
+                    <span id="question-category" class="inline-block px-2.5 py-1 rounded-md text-xs font-semibold bg-oxford-800 text-amber-300 border border-oxford-700/80 mb-3">
+                        Kategoria
+                    </span>
+                    <h3 id="question-text" class="text-xl sm:text-2xl font-bold text-slate-100 font-academic leading-snug">
+                        Treść pytania pojawi się tutaj...
+                    </h3>
+                </div>
+
+                <!-- Lista Opcji -->
+                <div id="options-container" class="space-y-3 mb-6">
+                    <!-- Opcje generowane dynamicznie przez JS -->
+                </div>
+
+                <!-- Sekcja Wyjaśnienia (Ukryta do momentu wyboru) -->
+                <div id="explanation-box" class="hidden p-4 rounded-xl bg-oxford-900/90 border border-oxford-700 text-sm mb-6 animate-fadeIn">
+                    <div class="flex items-start space-x-3">
+                        <div id="explanation-icon" class="mt-0.5 shrink-0"></div>
+                        <div>
+                            <p id="explanation-title" class="font-bold mb-1"></p>
+                            <p id="explanation-text" class="text-oxford-200 leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Przycisk Dalej -->
+                <div class="flex justify-end">
+                    <button id="next-btn" class="hidden px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl transition flex items-center space-x-2 shadow-md shadow-amber-500/10">
+                        <span>Następne Pytanie</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Ekran Wyników (Result Screen) -->
+            <div id="result-card" class="hidden custom-glass rounded-2xl p-6 sm:p-10 shadow-2xl border border-oxford-700/50 text-center">
+                <div id="result-badge" class="inline-flex p-4 rounded-full bg-oxford-900 border border-oxford-700 mb-4">
+                    <!-- Ikona zależna od wyniku -->
+                </div>
+
+                <h2 id="result-title" class="font-academic text-3xl font-bold text-slate-100 mb-2">
+                    Podsumowanie Quizu
+                </h2>
+                <p id="result-subtitle" class="text-oxford-300 text-sm mb-6">Oto Twój wynik znajomości debat oksfordzkich</p>
+
+                <!-- Wynik punktowy -->
+                <div class="bg-oxford-950/80 border border-oxford-800 rounded-2xl p-6 mb-6 max-w-sm mx-auto">
+                    <div class="text-5xl font-black text-amber-400 font-academic mb-1" id="final-score">0 / 10</div>
+                    <div class="text-xs text-oxford-300 uppercase tracking-wider font-semibold" id="final-percentage">0% poprawnych odpowiedzi</div>
+                </div>
+
+                <!-- Komunikat i Rekomendacja -->
+                <div class="p-4 rounded-xl bg-oxford-900/60 border border-oxford-800 text-left mb-8 max-w-lg mx-auto">
+                    <h4 class="font-bold text-amber-300 text-sm mb-1 flex items-center space-x-2">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                        <span>Ocena i Rekomendacja:</span>
+                    </h4>
+                    <p id="result-feedback" class="text-oxford-200 text-sm leading-relaxed">
+                        Ładowanie oceny...
+                    </p>
+                </div>
+
+                <!-- Przyciski Akcji -->
+                <div class="flex flex-col sm:flex-row justify-center gap-3">
+                    <button id="restart-btn" class="px-6 py-3 bg-oxford-800 hover:bg-oxford-700 text-slate-100 font-semibold rounded-xl border border-oxford-700 transition flex items-center justify-center space-x-2">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span>Spróbuj ponownie</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-oxford-800/40 py-4 text-center text-xs text-oxford-400">
+        <p>© 2026 Quiz Debaty Oksfordzkiej | Edukacyjny moduł wiedzy retorycznej</p>
+    </footer>
+
+    <!-- Script Logic -->
+    <script>
+        // Baza pytań do quizu
+        const questions = [
+            {
+                category: "Teza i Strony",
+                question: "Czym jest 'Teza' w debacie oksfordzkiej?",
+                options: [
+                    "Pytaniem, na które uczestnicy szukają wspólnej odpowiedzi",
+                    "Jednoznacznym stwierdzeniem, którego Propozycja broni, a Opozycja obala",
+                    "Listą argumentów przygotowaną przez Marszałka",
+                    "Podsumowaniem debaty wygłaszanym przez publiczność"
+                ],
+                correct: 1,
+                explanation: "Teza to jednoznaczne twierdzenie (np. 'Sztuczna inteligencja przynosi więcej zagrożeń niż korzyści'), którego strona Propozycji broni, a strona Opozycji stara się je obalić."
+            },
+            {
+                category: "Rola Prowadzących",
+                question: "Jaka jest główna rola Marszałka podczas debaty?",
+                options: [
+                    "Przyznawanie punktów za poszczególne mowy",
+                    "Udzielanie głosu mówcom, pilnowanie porządku i czuwanie nad przestrzeganiem zasad",
+                    "Zadawanie podchwytliwych pytań obu stronom",
+                    "Wygłaszanie mowy podsumowującej na koniec debaty"
+                ],
+                correct: 1,
+                explanation: "Marszałek prowadzi debatę, udziela głosu, dba o kulturę wypowiedzi oraz o to, by mówcy nie przekraczali wyznaczonego czasu."
+            },
+            {
+                category: "Rola Prowadzących",
+                question: "Za co odpowiada Sekretarz w debacie oksfordzkiej?",
+                options: [
+                    "Odejmowanie punktów za błędy językowe",
+                    "Mierzenie czasu wypowiedzi mówców i sygnalizowanie jego upływu",
+                    "Decydowanie o tym, kto wygrał debatę",
+                    "Zapisywanie tylko treści pytań od publiczności"
+                ],
+                correct: 1,
+                explanation: "Sekretarz wspiera Marszałka, precyzyjnie mierząc czas mówców oraz sygnalizując odpowiednimi dźwiękami (np. dzwonkiem) m.in. czas chroniony oraz koniec mowy."
+            },
+            {
+                category: "Skład Drużyn",
+                question: "Ilu zazwyczaj mówców liczy jedna drużyna w klasycznej debacie oksfordzkiej?",
+                options: [
+                    "2 mówców",
+                    "3 mówców",
+                    "4 mówców",
+                    "5 mówców"
+                ],
+                correct: 2,
+                explanation: "Standardowa drużyna w debacie oksfordzkiej składa się z 4 mówców, z których każdy pełni określoną rolę w strukturze debaty."
+            },
+            {
+                category: "Rola Mówców",
+                question: "Jaka jest główna rola Pierwszego Mówcy Propozycji (P1)?",
+                options: [
+                    "Obalenie argumentów Opozycji i podsumowanie debaty",
+                    "Zdefiniowanie pojęć zawartych w tezie i przedstawienie linii argumentacyjnej swojej strony",
+                    "Wyłącznie zadawanie pytań drużynie przeciwnej",
+                    "Przedstawienie riposty na mowę czwartego mówcy Opozycji"
+                ],
+                correct: 1,
+                explanation: "Pierwszy Mówca Propozycji definiuje kluczowe pojęcia z tezy, zarysowuje kontekst i prezentuje zarys całej linii argumentacyjnej swojej drużyny."
+            },
+            {
+                category: "Interakcje i Pytania",
+                question: "Co oznacza pojęcie 'Czas Chroniony' podczas mowy danego uczestnika?",
+                options: [
+                    "Czas, w którym mówca może mówić bez ograniczeń czasowych",
+                    "Początek i koniec mowy (np. pierwsza i ostatnia minuta), kiedy nie wolno zadawać pytań ani zgłaszać informacji",
+                    "Moment, w którym Marszałek chroni mówcę przed trudnymi pytaniami sędziów",
+                    "Przerwa techniczna w trakcie debaty na skonsultowanie się z drużyną"
+                ],
+                correct: 1,
+                explanation: "Czas chroniony (zwykle 1. minuta i ostatnia minuta mowy) zabezpiecza mówcę przed wstępnym rozpraszaniem – w tym czasie strona przeciwna nie może zgłaszać pytań ani informacji."
+            },
+            {
+                category: "Interakcje i Pytania",
+                question: "W jaki sposób strona przeciwna zgłasza chęć zadania pytania lub udzielenia informacji?",
+                options: [
+                    "Głośno przerywając mówcy w dowolnym momencie",
+                    "Wstając, podnosząc rękę i wypowiadając słowa np. 'Pytanie' lub 'Informacja'",
+                    "Pisząc pytanie na kartce i przekazując je przez Sekretarza",
+                    "Czekając, aż Marszałek sam zapyta, czy są pytania z sali"
+                ],
+                correct: 1,
+                explanation: "Mówca strony przeciwnej wstaje ze swojego miejsca, wyciąga rękę i wyraźnie wypowiada: 'Pytanie' lub 'Informacja'. Mówca aktualnie przemawiający decyduje, czy przyjąć, czy odrzucić zgłoszenie."
+            },
+            {
+                category: "Rola Mówców",
+                question: "Co jest kluczowym zadaniem Czwartych Mówców (P4 i O4)?",
+                options: [
+                    "Wprowadzenie nowych, zaskakujących argumentów",
+                    "Podsumowanie debaty, porównanie stanowisk obu stron i wykazanie przewagi własnej drużyny bez wprowadzania nowych argumentów",
+                    "Głosowanie wraz z publicznością na najlepszego mówcę",
+                    "Przeproszenie za błędy popełnione przez wcześniejszych mówców"
+                ],
+                correct: 1,
+                explanation: "Czwarty mówca wygłasza mowę podsumowującą. Jego zadaniem jest synteza debaty i bilans zysków/strat. Ważną zasadą jest zakaz wprowadzania zupełnie nowych argumentów na tym etapie."
+            },
+            {
+                category: "Głosowanie i Wynik",
+                question: "Jaka jest rola publiczności w tradycyjnym modelu debaty oksfordzkiej?",
+                options: [
+                    "Publiczność nie ma żadnego wpływu na przebieg i wynik debaty",
+                    "Publiczność rozstrzyga debatę poprzez głosowanie przed debatą i po jej zakończeniu (badanie zmiany opinii)",
+                    "Publiczność może wchodzić na mównicę i zastępować słabszych mówców",
+                    "Publiczność ocenia wyłącznie strój i prezencję mówców"
+                ],
+                correct: 1,
+                explanation: "Tradycyjnie publiczność głosuje 'ZA', 'PRZECIW' lub 'NIE MAM ZDANIA' przed debatą i po niej. Wynikiem debaty w ujęciu publiczności jest to, która strona przekonała do zmiany zdania większą liczbę osób."
+            },
+            {
+                category: "Ocena Sędziowska",
+                question: "Co decyduje o wygranej w debacie oceniannej przez Sędziów/Ekspertów?",
+                options: [
+                    "Głośność wypowiedzi i używanie trudnych słów",
+                    "Wyłącznie to, która strona miała łatwiejszą do obrony tezę",
+                    "Merytoryka argumentów, spójność logiczna, kontrargumentacja, kultura wypowiedzi i struktura mów",
+                    "Liczba zadanych pytań, niezależnie od ich jakości"
+                ],
+                correct: 2,
+                explanation: "Eksperci oceniają siłę logiczną argumentów, umiejętność ripostowania i zbijania argumentów rywali, realizację ról w drużynie oraz kulturę i styl retoryczny."
+            }
+        ];
+
+        // Stan aplikacji
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOption = null;
+        let answered = false;
+
+        // Elementy DOM
+        const startCard = document.getElementById('start-card');
+        const quizCard = document.getElementById('quiz-card');
+        const resultCard = document.getElementById('result-card');
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+
+        const questionCounter = document.getElementById('question-counter');
+        const scoreLive = document.getElementById('score-live');
+        const progressBar = document.getElementById('progress-bar');
+        const questionCategory = document.getElementById('question-category');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+
+        const explanationBox = document.getElementById('explanation-box');
+        const explanationIcon = document.getElementById('explanation-icon');
+        const explanationTitle = document.getElementById('explanation-title');
+        const explanationText = document.getElementById('explanation-text');
+
+        // Inicjalizacja
+        startBtn.addEventListener('click', startQuiz);
+        nextBtn.addEventListener('click', handleNextQuestion);
+        restartBtn.addEventListener('click', restartQuiz);
+
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            startCard.classList.add('hidden');
+            quizCard.classList.remove('hidden');
+            resultCard.classList.add('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            answered = false;
+            selectedOption = null;
+            nextBtn.classList.add('hidden');
+            explanationBox.classList.add('hidden');
+
+            const q = questions[currentQuestionIndex];
+
+            // Aktualizacja paska i liczników
+            questionCounter.innerText = `Pytanie ${currentQuestionIndex + 1} z ${questions.length}`;
+            scoreLive.innerText = `Wynik: ${score} pkt`;
+            const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+
+            questionCategory.innerText = q.category;
+            questionText.innerText = q.question;
+
+            // Czyszczenie i generowanie opcji
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `option-card w-full text-left p-4 rounded-xl bg-oxford-900/50 border border-oxford-800 text-slate-200 font-medium flex items-center justify-between group`;
+                btn.onclick = () => selectOption(idx);
+
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-7 h-7 rounded-lg bg-oxford-800 border border-oxford-700 text-oxford-300 text-xs font-bold flex items-center justify-center shrink-0 group-hover:border-amber-400 group-hover:text-amber-400 transition-colors">
+                            ${String.fromCharCode(65 + idx)}
+                        </span>
+                        <span class="text-sm sm:text-base leading-snug">${opt}</span>
+                    </div>
+                    <div class="status-icon shrink-0 ml-2"></div>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Re-render ikonek Lucide dla dynamicznych elementów
+            lucide.createIcons();
+        }
+
+        function selectOption(index) {
+            if (answered) return;
+            answered = true;
+
+            const q = questions[currentQuestionIndex];
+            const optionButtons = optionsContainer.children;
+
+            // Oznaczenie odpowiedzi użytkownika
+            if (index === q.correct) {
+                score++;
+                scoreLive.innerText = `Wynik: ${score} pkt`;
+                optionButtons[index].classList.remove('bg-oxford-900/50', 'border-oxford-800');
+                optionButtons[index].classList.add('bg-emerald-950/60', 'border-emerald-500/80', 'text-emerald-200');
+                optionButtons[index].querySelector('.status-icon').innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>`;
+                
+                showExplanation(true, q.explanation);
+            } else {
+                optionButtons[index].classList.remove('bg-oxford-900/50', 'border-oxford-800');
+                optionButtons[index].classList.add('bg-rose-950/60', 'border-rose-500/80', 'text-rose-200');
+                optionButtons[index].querySelector('.status-icon').innerHTML = `<i data-lucide="x-circle" class="w-5 h-5 text-rose-400"></i>`;
+
+                // Pokaż prawidłową
+                optionButtons[q.correct].classList.remove('bg-oxford-900/50', 'border-oxford-800');
+                optionButtons[q.correct].classList.add('bg-emerald-950/40', 'border-emerald-500/50', 'text-emerald-200');
+                optionButtons[q.correct].querySelector('.status-icon').innerHTML = `<i data-lucide="check-circle" class="w-5 h-5 text-emerald-400/70"></i>`;
+
+                showExplanation(false, q.explanation);
+            }
+
+            // Zablokuj karty
+            Array.from(optionButtons).forEach(btn => {
+                btn.classList.add('disabled');
+                btn.style.cursor = 'default';
+            });
+
+            nextBtn.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function showExplanation(isCorrect, text) {
+            explanationBox.classList.remove('hidden');
+            
+            if (isCorrect) {
+                explanationBox.className = "p-4 rounded-xl bg-emerald-950/30 border border-emerald-800/60 text-sm mb-6";
+                explanationIcon.innerHTML = `<i data-lucide="sparkles" class="w-5 h-5 text-emerald-400"></i>`;
+                explanationTitle.className = "font-bold mb-1 text-emerald-300";
+                explanationTitle.innerText = "Świetnie! Poprawna odpowiedź.";
+            } else {
+                explanationBox.className = "p-4 rounded-xl bg-amber-950/30 border border-amber-800/60 text-sm mb-6";
+                explanationIcon.innerHTML = `<i data-lucide="alert-circle" class="w-5 h-5 text-amber-400"></i>`;
+                explanationTitle.className = "font-bold mb-1 text-amber-300";
+                explanationTitle.innerText = "Niestety, to błędna odpowiedź.";
+            }
+            
+            explanationText.innerText = text;
+            lucide.createIcons();
+        }
+
+        function handleNextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            quizCard.classList.add('hidden');
+            resultCard.classList.remove('hidden');
+
+            const finalScoreEl = document.getElementById('final-score');
+            const finalPercentageEl = document.getElementById('final-percentage');
+            const resultFeedback = document.getElementById('result-feedback');
+            const resultBadge = document.getElementById('result-badge');
+
+            const percentage = Math.round((score / questions.length) * 100);
+            finalScoreEl.innerText = `${score} / ${questions.length}`;
+            finalPercentageEl.innerText = `${percentage}% poprawnych odpowiedzi`;
+
+            // Pasek postępu na 100% na koniec
+            progressBar.style.width = `100%`;
+
+            let badgeHtml = '';
+            let feedbackText = '';
+
+            if (score === 10) {
+                badgeHtml = `<i data-lucide="crown" class="w-12 h-12 text-amber-400"></i>`;
+                feedbackText = "<strong>Doskonale! Arcyksiążę Retoryki!</strong> Posiadasz pełną i bezbłędną wiedzę na temat zasad debaty oksfordzkiej. Poradziłbyś sobie w roli Marszałka na dowolnym turnieju ogólnopolskim.";
+            } else if (score >= 7) {
+                badgeHtml = `<i data-lucide="award" class="w-12 h-12 text-amber-400"></i>`;
+                feedbackText = "<strong>Bardzo dobry wynik!</strong> Znasz kluczowe zasady, role mówców i zasady savoir-vivre'u debat. Drobne szlify merytoryczne i jesteś gotowy do walki na oratorium!";
+            } else if (score >= 5) {
+                badgeHtml = `<i data-lucide="book-open" class="w-12 h-12 text-blue-400"></i>`;
+                feedbackText = "<strong>Przeciętny wynik.</strong> Rozumiesz podstawowy zarys debaty, ale niektóre szczegóły (np. role konkretnych mówców lub zasady czasu chronionego) wymagają jeszcze powtórzenia.";
+            } else {
+                badgeHtml = `<i data-lucide="help-circle" class="w-12 h-12 text-slate-400"></i>`;
+                feedbackText = "<strong>Początkujący mówca.</strong> Zasady debaty oksfordzkiej mogą wydawać się skomplikowane na początku. Przejrzyj wyjaśnienia przy pytaniach i spróbuj jeszcze raz!";
+            }
+
+            resultBadge.innerHTML = badgeHtml;
+            resultFeedback.innerHTML = feedbackText;
+            lucide.createIcons();
+        }
+
+        function restartQuiz() {
+            startQuiz();
+        }
+
+        // Inicjalizacja ikon Lucide na starcie
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
